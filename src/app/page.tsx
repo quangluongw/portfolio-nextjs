@@ -4,10 +4,7 @@ import avatar from "../image/z5524294549681_20c44fa401da2573eeb0bde376828d38.jpg
 import Link from "next/link";
 import { getBlogs } from "@/services/blog";
 export default async function Home() {
-
   const data = await getBlogs();
-  console.log(data);
-
   return (
     <div>
       <section className="mt-8">

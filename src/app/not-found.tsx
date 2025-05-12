@@ -1,9 +1,10 @@
 import React from 'react'
 
-export default function page() {
+export default function Notfound() {
     return (
         <div>
-            second blog
+            <h2>Not Found</h2>
+
         </div>
     )
 }

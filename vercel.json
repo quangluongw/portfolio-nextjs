@@ -1,10 +1,13 @@
 {
-    "version": 2,
-    "builds": [
-      { "src": "package.json", "use": "@vercel/node" }
-    ],
-    "routes": [
-      { "src": "/api/(.*)", "dest": "/api/$1.js" }
-    ]
+  "version": 2,
+  "env": {
+    "SUPABASE_URL": "https://mqaesyeqvgxzzdgcyspw.supabase.co",
+    "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xYWVzeWVxdmd4enpkZ2N5c3B3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3OTc1NzUsImV4cCI6MjA2MjM3MzU3NX0.oNZSuBo6CW8xDGYcNbQS-u6WxUuNdx8EfM0OzdtbPiY"
+  },
+  "build": {
+    "env": {
+      "SUPABASE_URL": "https://mqaesyeqvgxzzdgcyspw.supabase.co",
+      "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xYWVzeWVxdmd4enpkZ2N5c3B3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3OTc1NzUsImV4cCI6MjA2MjM3MzU3NX0.oNZSuBo6CW8xDGYcNbQS-u6WxUuNdx8EfM0OzdtbPiY"
+    }
   }
-  
+}

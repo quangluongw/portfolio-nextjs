@@ -1,25 +1,17 @@
 import { supabase } from "../supabase/supabase";
-export const loginWithGithub = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "github",
+export const loginWithGithub = async (): Promise<void> => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
   });
 
-  if (error) {
-    console.error("GitHub login error:", error.message);
-    return null;
-  }
-
-  return data;
+  if (error) throw error;
 };
-export const loginWithGoogle = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
+
+export const loginWithGoogle = async (): Promise<void> => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
   });
 
-  if (error) {
-    console.error("Google login error:", error.message);
-    return null;
-  }
-
-  return data;
+  if (error) throw error;
 };
+

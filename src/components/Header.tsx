@@ -12,7 +12,6 @@ import Link from "next/link";
 import useUser from "@/app/hooks/useUser";
 export default function Header() {
   const { user } = useUser();
-
   const [theme, setTheme] = useState<string>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("theme") || "dark";

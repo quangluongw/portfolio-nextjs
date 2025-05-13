@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function ComplexDashboard() {
+export default function F2() {
     return (
         <div>
-            ComplexDashboard
+            <h2>f2</h2>
         </div>
     )
 }

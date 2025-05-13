@@ -1,8 +1,10 @@
-"use client";
+'use client';
 import { Geist, Geist_Mono } from "next/font/google";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect, useState } from 'react';
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -19,11 +21,27 @@ export default function LayoutClient({
   children: React.ReactNode;
 }) {
   const queryClient = new QueryClient();
+  const [theme, setTheme] = useState(''); // Giá trị mặc định
+
+  useEffect(() => {
+    // Chỉ chạy trên client side
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+  }, []);
 
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="en" data-theme={theme}>
+      <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            document.documentElement.setAttribute('data-theme', 
+              localStorage.getItem('theme') || 'dark'
+            );
+          `,
+        }} />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} max-w-screen-xl mx-auto my-3 px-3 md:px-8 antialiased dark:bg-[#181A1F] dark:text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} ${theme === null ? 'opacity-0' : 'opacity-100'}  max-w-screen-xl mx-auto my-3 px-3 md:px-8 antialiased dark:bg-[#181A1F] dark:text-white`}
       >
         <QueryClientProvider client={queryClient}>
           <Header />

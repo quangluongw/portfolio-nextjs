@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "../css/globals.css";
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import LayoutClient from "./layout2";
+import { Toaster } from "sonner";
 export const metadata: Metadata = {
   title: {
     default: "Create Next App",
@@ -17,6 +18,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <LayoutClient>{children}</LayoutClient>
+    <LayoutClient>
+      {children}
+      <Toaster position="top-right"  />
+      </LayoutClient>
   );
 }

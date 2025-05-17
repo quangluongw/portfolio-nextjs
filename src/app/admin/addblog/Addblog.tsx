@@ -15,7 +15,6 @@ type Category = {
 
 export default function Addblog({ categories }: { categories: Category[] }) {
   const [imageUpload, setImageUpload] = useState("");
-  const [image, setImage] = useState("");
 
   const {
     register,

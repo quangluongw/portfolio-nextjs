@@ -1,13 +1,9 @@
 "use client";
 
-import { Inputs } from "@/types/bloginput";
+import {  dataBlog } from "@/types/bloginput";
 import Image from "next/image";
 import Link from "next/link";
-type dataBlog = {
-  data: Inputs[];
-  totalPages: number;
-  page: number;
-};
+
 
 export default function BlogPage({ data }: { data: dataBlog }) {
   return (
@@ -16,7 +12,7 @@ export default function BlogPage({ data }: { data: dataBlog }) {
         {data?.data.map((item) => (
           <article className="mb-2 sm:mb-8 cursor-pointer" key={item.id}>
             <div className="rounded-lg transition-all dark:hover:bg-[#1B1F24] ">
-              <Link href={`blog/${item.id}`}>
+              <Link href={`blog/${item.slug}`}>
                 <div className="p-4">
                   <Image
                     src={item.image}

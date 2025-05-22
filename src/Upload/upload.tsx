@@ -9,6 +9,10 @@ interface UploadImageProps {
   setimages: (url: string) => void;
   images?: string;
 }
+interface FileResponse {
+  secure_url?: string;
+  url?: string;
+}
 
 export default function UploadImage({ setimages, images }: UploadImageProps) {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -45,7 +49,7 @@ export default function UploadImage({ setimages, images }: UploadImageProps) {
     setPreviewOpen(true);
   };
 
-  const handleUpload = (info: UploadChangeParam<UploadFile<UploadImageProps>>) => {
+  const handleUpload = (info: UploadChangeParam<UploadFile<FileResponse>>) => {
     let newFileList = [...info.fileList];
 
     newFileList = newFileList.map((file) => {
@@ -64,19 +68,16 @@ export default function UploadImage({ setimages, images }: UploadImageProps) {
     }
   };
 
-  const beforeUpload = (file: RcFile) => {
-    const isImage = file.type.match('image/*')
-    console.log(isImage);
-    
-    if (isImage) {
-       toast.error("Upload only image formats!");
-      
+  const beforeUpload = (file: File) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      toast.error('You can only upload JPG/PNG file!');
     }
-    if (file.size > 5000000) {
-       toast.error("Upload only image formats!");
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      toast.error('Image must smaller than 2MB!');
     }
-
-    return isImage || Upload.LIST_IGNORE;
+    return isJpgOrPng && isLt2M;
   };
 
   const imageToShow = fileList.length === 0 ? images : previewImage;

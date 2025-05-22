@@ -60,12 +60,12 @@ export const getBlogCategory = async () => {
   return data;
 };
 
-export async function getBlogId(id: string) {
+export async function getBlogId(slug: string) {
   // 1. Lấy blog theo ID
   const { data: blog, error: blogError } = await supabase
     .from("blog")
     .select("*")
-    .eq("id", id)
+    .eq("slug", slug)
     .single();
 
   if (blogError || !blog) {

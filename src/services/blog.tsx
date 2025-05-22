@@ -1,15 +1,49 @@
 import { supabase } from "../supabase/supabase";
 import { Inputs } from "@/types/bloginput";
 
-export const getBlogs = async () => {
-  const { data, error } = await supabase.from("blog").select("*");
+export async function getBlogs({
+  page = 1,
+  category,
+  tagId,
+  search,
+}: {
+  page?: number;
+  category?: string;
+  tagId?: string;
+  search?: string;
+}) {
+  const pageSize = 10;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
 
-  if (error) {
-    throw new Error(error.message);
+  let query = supabase
+    .from("blog")
+    .select("*", { count: "exact" })
+    .range(from, to);
+
+  if (category) {
+    query = query.eq("category_id", category);
   }
 
-  return data;
-};
+  if (tagId) {
+    query = query.eq("tag_id", tagId);
+  }
+
+  if (search) {
+    query = query.or(`title.ilike.%${search}%`);
+  }
+
+  const { data, error, count } = await query;
+
+  if (error) throw error;
+
+  return {
+    data,
+    page,
+    totalPages: count ? Math.ceil(count / pageSize) : 0,
+  };
+}
+
 export const getBlogCategory = async () => {
   const { data, error } = await supabase.from("blog").select(`
       *,
@@ -27,17 +61,60 @@ export const getBlogCategory = async () => {
 };
 
 export async function getBlogId(id: string) {
-  const { data, error } = await supabase
+  // 1. Lấy blog theo ID
+  const { data: blog, error: blogError } = await supabase
     .from("blog")
     .select("*")
     .eq("id", id)
     .single();
-  if (error) {
-    console.error(error);
-    throw new Error("Blogs not found");
+
+  if (blogError || !blog) {
+    console.error(blogError);
+    throw new Error("Blog not found");
   }
 
-  return data;
+  // 2. Lấy tên category từ bảng 'category'
+  const { data: category, error: categoryError } = await supabase
+    .from("category")
+    .select("name")
+    .eq("id", blog.category_id)
+    .single();
+
+  if (categoryError) {
+    console.warn("Không tìm thấy category:", categoryError);
+  }
+
+  // 3. Lấy tag từ bảng 'tag' (cột là 'tag')
+  const { data: tag, error: tagError } = await supabase
+    .from("tag")
+    .select("tag")
+    .eq("id", blog.tag_id)
+    .single();
+
+  if (tagError) {
+    console.warn("Không tìm thấy tag:", tagError);
+  }
+
+  // 4. Trả về dữ liệu đã gộp
+  return {
+    ...blog,
+    category_name: category?.name ?? null,
+    tag_name: tag?.tag ?? null, // <- đổi ở đây
+  };
+}
+
+export async function getBlogTagId(blogId: string) {
+  const { data, error } = await supabase
+    .from("blog_tags")
+    .select("tag(*)") // truy vấn bảng `tag` thông qua quan hệ
+    .eq("blog_id", blogId);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Tags not found");
+  }
+
+  return data.map((item) => item.tag); // Trả về danh sách tag
 }
 
 export const deleteBlog = async (id: string) => {
@@ -56,7 +133,7 @@ export const addBlog = async (value: Inputs[]) => {
   }
   return data;
 };
-export const updateBlog = async (value: Inputs[],id:string) => {
+export const updateBlog = async (value: Inputs[], id: string) => {
   const { data, error } = await supabase
     .from("blog")
     .update(value)

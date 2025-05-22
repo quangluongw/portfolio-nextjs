@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import "../style.css";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "antd";
@@ -7,31 +7,64 @@ import { addBlog } from "@/services/blog";
 import { useRouter } from "next/navigation";
 import Upload from "@/Upload/upload";
 import { Inputs } from "@/types/bloginput";
+// import { getTags } from "@/services/tag";
+// import Image from "next/image";
 
 type Category = {
   id: string;
   name: string;
 };
 
+// type Tag = {
+//   id: string;
+//   tag: string;
+// };
+
 export default function Addblog({ categories }: { categories: Category[] }) {
   const [imageUpload, setImageUpload] = useState("");
-
+  // const [tags, setTags] = useState<Tag[]>([]);
+  // const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  // const [preview, setPreview] = useState();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
+
   const router = useRouter();
+
+  // useEffect(() => {
+  //   const fetchTags = async () => {
+  //     try {
+  //       const result = await getTags();
+  //       setTags(result);
+  //     } catch (error) {
+  //       console.error("Failed to fetch tags", error);
+  //     }
+  //   };
+  //   fetchTags();
+  // }, []);
+
   const onSubmit: SubmitHandler<Inputs> = async (value) => {
     try {
-      const data = [{ ...value, image: imageUpload }];
-      await addBlog(data);
+      const blogData = {
+        ...value,
+        image: imageUpload,
+        // tag_ids: selectedTags,
+      };
+      await addBlog([blogData]);
       router.push("/admin");
     } catch (error) {
       console.error(error);
     }
   };
-
+// const handChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
+//  const file= e.target.files[0]
+//  if (!file) return;
+//   const objectUrl=URL.createObjectURL(file);
+//   console.log(objectUrl);
+//   setPreview(objectUrl)
+// }
   return (
     <div className="modal mt-20 w-full m-auto">
       <form className="form" onSubmit={handleSubmit(onSubmit)}>
@@ -50,6 +83,17 @@ export default function Addblog({ categories }: { categories: Category[] }) {
             )}
           </div>
           <Upload setimages={setImageUpload} />
+          {/* <div className="input_container">
+            <label className="input_label">Upload Image</label>
+            <input type="file" accept="image/*" onChange={(e)=>handChange(e)} />
+            <Image
+              src={preview}
+              width={300}
+              height={300}
+              className="aspect-video w-full rounded-md object-cover mt-2"
+              alt="Uploaded preview"
+            />
+          </div> */}
           <div className="input_container">
             <label className="input_label">Description</label>
             <input
@@ -64,6 +108,7 @@ export default function Addblog({ categories }: { categories: Category[] }) {
               <span className="text-red-500">{errors.description.message}</span>
             )}
           </div>
+
           <div className="input_container">
             <label className="input_label">Long description</label>
             <textarea
@@ -80,6 +125,7 @@ export default function Addblog({ categories }: { categories: Category[] }) {
               </span>
             )}
           </div>
+
           <div className="input_container">
             <label className="input_label">Category</label>
             <select
@@ -97,7 +143,26 @@ export default function Addblog({ categories }: { categories: Category[] }) {
               <span className="text-red-500">{errors.category_id.message}</span>
             )}
           </div>
+
+          {/* <div className="input_container">
+            <label className="input_label">Tags</label>
+            <Space style={{ width: "100%" }} direction="vertical">
+              <Select
+                mode="multiple"
+                allowClear
+                style={{ width: "100%" }}
+                placeholder="Please select"
+                value={selectedTags}
+                onChange={(value) => setSelectedTags(value)}
+                options={tags.map((item) => ({
+                  label: item.tag,
+                  value: item.id,
+                }))}
+              />
+            </Space>
+          </div> */}
         </div>
+
         <Button
           type="primary"
           htmlType="submit"

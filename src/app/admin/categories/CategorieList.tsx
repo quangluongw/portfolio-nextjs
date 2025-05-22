@@ -3,19 +3,20 @@ import React from "react";
 import { Table } from "antd";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { deleteTag } from "@/services/tag";
 import { toast } from "sonner";
 import { categories } from "@/types/categories";
 import { deleteCategories } from "@/services/categories";
+import { ColumnsType } from "antd/es/table";
 
 type Props = {
   data: categories[];
 };
-
+interface TableData {
+  key: string;
+  name: string;
+}
 export default function CategorieList({ data }: Props) {
   const router = useRouter();
-  console.log(data);
-
   const handleDelete = async (id: string) => {
     // console.log(id);
 
@@ -23,12 +24,12 @@ export default function CategorieList({ data }: Props) {
     toast.success("Xóa thành công");
     router.refresh();
   };
-  const dataSource = data.map((item) => ({
+  const dataSource: TableData[] = data.map((item) => ({
     key: item.id,
     name: item.name,
   }));
 
-  const columns = [
+  const columns: ColumnsType<TableData> = [
     {
       title: "Name",
       dataIndex: "name",
@@ -38,7 +39,7 @@ export default function CategorieList({ data }: Props) {
       title: "Action",
       dataIndex: "Action",
       key: "Action",
-      render: (_: any, record: any) => (
+      render: (_: unknown, record: TableData) => (
         <div className="flex items-center gap-3">
           <Link href={`updatecategorie/${record.key}`}>Edit</Link>
           <button onClick={() => handleDelete(record.key)}>Delete</button>

@@ -1,14 +1,13 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
-import { Upload, message, Image } from "antd";
+import { Upload, Image } from "antd";
 import type { UploadChangeParam, UploadFile } from "antd/es/upload/interface";
 import type { RcFile } from "antd/es/upload";
 import { PlusOutlined } from "@ant-design/icons";
-
+import { toast } from "sonner";
 interface UploadImageProps {
   setimages: (url: string) => void;
-  images: string;
+  images?: string;
 }
 
 export default function UploadImage({ setimages, images }: UploadImageProps) {
@@ -46,7 +45,7 @@ export default function UploadImage({ setimages, images }: UploadImageProps) {
     setPreviewOpen(true);
   };
 
-  const handleUpload = (info: UploadChangeParam<UploadFile<any>>) => {
+  const handleUpload = (info: UploadChangeParam<UploadFile<UploadImageProps>>) => {
     let newFileList = [...info.fileList];
 
     newFileList = newFileList.map((file) => {
@@ -66,13 +65,19 @@ export default function UploadImage({ setimages, images }: UploadImageProps) {
   };
 
   const beforeUpload = (file: RcFile) => {
-    const isImage = file.type.startsWith("image/");
-    if (!isImage) {
-      message.error("Upload only image formats!");
+    const isImage = file.type.match('image/*')
+    console.log(isImage);
+    
+    if (isImage) {
+       toast.error("Upload only image formats!");
+      
     }
+    if (file.size > 5000000) {
+       toast.error("Upload only image formats!");
+    }
+
     return isImage || Upload.LIST_IGNORE;
   };
-console.log(images);
 
   const imageToShow = fileList.length === 0 ? images : previewImage;
 

@@ -19,7 +19,6 @@ export default function UploadImage({ setimages, images }: UploadImageProps) {
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string>("");
 
-  // Cập nhật fileList ban đầu nếu có images từ props
   useEffect(() => {
     if (images) {
       setFileList([
@@ -33,22 +32,13 @@ export default function UploadImage({ setimages, images }: UploadImageProps) {
     }
   }, [images]);
 
-  const getBase64 = (file: RcFile): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview && file.originFileObj) {
-      file.preview = await getBase64(file.originFileObj as RcFile);
+      file.preview = URL.createObjectURL(file.originFileObj as RcFile);
     }
     setPreviewImage(file.url || (file.preview as string));
     setPreviewOpen(true);
   };
-
   const handleUpload = (info: UploadChangeParam<UploadFile<FileResponse>>) => {
     let newFileList = [...info.fileList];
 
@@ -68,17 +58,24 @@ export default function UploadImage({ setimages, images }: UploadImageProps) {
     }
   };
 
-  const beforeUpload = (file: File) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      toast.error('You can only upload JPG/PNG file!');
+  const beforeUpload = (file: File): boolean | Promise<boolean> => {
+    const maxSizeMB = 2;
+    const isImage = file.type.startsWith("image/");
+
+    const isValidSize = file.size / 1024 / 1024 < maxSizeMB;
+  
+    if (!isImage) {
+      toast.error("Chỉ chấp nhận định dạng JPG hoặc PNG!");
     }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      toast.error('Image must smaller than 2MB!');
+  
+    if (!isValidSize) {
+      toast.error("Kích thước ảnh phải nhỏ hơn 2MB!");
     }
-    return isJpgOrPng && isLt2M;
+  
+    // Trả về false nếu không hợp lệ để chặn file bị thêm vào
+    return !isImage && isValidSize;
   };
+  
 
   const imageToShow = fileList.length === 0 ? images : previewImage;
 
@@ -87,6 +84,7 @@ export default function UploadImage({ setimages, images }: UploadImageProps) {
       <Upload
         action="https://api.cloudinary.com/v1_1/dkrcsuwbc/image/upload"
         listType="picture-card"
+        accept="image/*"
         data={{ upload_preset: "image1" }}
         onPreview={handlePreview}
         onChange={handleUpload}

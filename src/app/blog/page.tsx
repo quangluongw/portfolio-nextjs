@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { dataBlog } from "@/types/bloginput";
 
-// Tách phần lấy params và fetch data ra component con để bọc Suspense ở component cha
 function BlogContent() {
   const searchParams = useSearchParams();
   const [data, setData] = useState<dataBlog | null>(null);

@@ -61,7 +61,7 @@ export const getBlogCategory = async () => {
 };
 
 export async function getBlogId(slug: string) {
-  // 1. Lấy blog theo ID
+  // 1. Lấy blog theo slug
   const { data: blog, error: blogError } = await supabase
     .from("blog")
     .select("*")
@@ -69,12 +69,11 @@ export async function getBlogId(slug: string) {
     .single();
 
   if (blogError || !blog) {
-    console.error(blogError);
-    throw new Error("Blog not found");
+    return null;
   }
 
   // 2. Lấy tên category từ bảng 'category'
-  const { data: category, error: categoryError } = await supabase
+  const { data: categoryData, error: categoryError } = await supabase
     .from("category")
     .select("name")
     .eq("id", blog.category_id)
@@ -84,8 +83,8 @@ export async function getBlogId(slug: string) {
     console.warn("Không tìm thấy category:", categoryError);
   }
 
-  // 3. Lấy tag từ bảng 'tag' (cột là 'tag')
-  const { data: tag, error: tagError } = await supabase
+  // 3. Lấy tên tag từ bảng 'tag'
+  const { data: tagData, error: tagError } = await supabase
     .from("tag")
     .select("tag")
     .eq("id", blog.tag_id)
@@ -95,11 +94,11 @@ export async function getBlogId(slug: string) {
     console.warn("Không tìm thấy tag:", tagError);
   }
 
-  // 4. Trả về dữ liệu đã gộp
+  // 4. Trả về dữ liệu gộp
   return {
     ...blog,
-    category_name: category?.name ?? null,
-    tag_name: tag?.tag ?? null, // <- đổi ở đây
+    category_name: categoryData?.name ?? null,
+    tag_name: tagData?.tag ?? null,
   };
 }
 

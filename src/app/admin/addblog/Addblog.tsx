@@ -7,6 +7,7 @@ import { addBlog } from "@/services/blog";
 import { useRouter } from "next/navigation";
 import Upload from "@/Upload/upload";
 import { Inputs } from "@/types/bloginput";
+import { toast } from "sonner";
 // import { getTags } from "@/services/tag";
 // import Image from "next/image";
 
@@ -46,7 +47,8 @@ export default function Addblog({ categories }: { categories: Category[] }) {
   // }, []);
 
   const onSubmit: SubmitHandler<Inputs> = async (value) => {
-    try {
+    if (imageUpload) {
+      
       const blogData = {
         ...value,
         image: imageUpload,
@@ -54,26 +56,19 @@ export default function Addblog({ categories }: { categories: Category[] }) {
       };
       await addBlog([blogData]);
       router.push("/admin");
-    } catch (error) {
-      console.error(error);
+    }else{
+      toast.error("Chưa thêm ảnh")
     }
   };
-// const handChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
-//  const file= e.target.files[0]
-//  if (!file) return;
-//   const objectUrl=URL.createObjectURL(file);
-//   console.log(objectUrl);
-//   setPreview(objectUrl)
-// }
   return (
     <div className="modal mt-20 w-full m-auto">
-      <form className="form" onSubmit={handleSubmit(onSubmit)}>
-        <h2 className="text-center w-full text-2xl">Add Blog</h2>
+      <form className="form dark:bg-[#2D2D2D] rounded-2xl" onSubmit={handleSubmit(onSubmit)}>
+        <h2 className="text-center w-full text-2xl dark:text-[#E0F7FA]">Add Blog</h2>
         <div className="credit-card-info--form">
           <div className="input_container">
-            <label className="input_label">Title</label>
+            <label >Title</label>
             <input
-              className="input_field"
+              className="input_field dark:text-white  border-2 dark:border-[#4A4A4A]"
               type="text"
               placeholder="Enter your title"
               {...register("title", { required: "Title is required" })}
@@ -82,6 +77,7 @@ export default function Addblog({ categories }: { categories: Category[] }) {
               <span className="text-red-500">{errors.title.message}</span>
             )}
           </div>
+          <label htmlFor="" >Image</label>
           <Upload setimages={setImageUpload} />
           {/* <div className="input_container">
             <label className="input_label">Upload Image</label>
@@ -95,9 +91,9 @@ export default function Addblog({ categories }: { categories: Category[] }) {
             />
           </div> */}
           <div className="input_container">
-            <label className="input_label">Description</label>
+            <label >Description</label>
             <input
-              className="input_field"
+              className="input_field dark:text-white  border-2 dark:border-[#4A4A4A]"
               type="text"
               placeholder="Enter your description"
               {...register("description", {
@@ -110,9 +106,9 @@ export default function Addblog({ categories }: { categories: Category[] }) {
           </div>
 
           <div className="input_container">
-            <label className="input_label">Long description</label>
+            <label >Long description</label>
             <textarea
-              className="input_field"
+              className="input_field dark:text-white  border-2 dark:border-[#4A4A4A]"
               placeholder="Enter your long description"
               rows={4}
               {...register("longdescription", {
@@ -127,9 +123,9 @@ export default function Addblog({ categories }: { categories: Category[] }) {
           </div>
 
           <div className="input_container">
-            <label className="input_label">Category</label>
+            <label >Category</label>
             <select
-              className="border-2 border-gray-200 p-2 w-full"
+              className="border-2 rounded-md border-gray-200 p-2 w-full dark:text-white  dark:border-[#4A4A4A]"
               {...register("category_id", { required: "Category is required" })}
             >
               <option value="">Select a category</option>

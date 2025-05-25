@@ -2,6 +2,7 @@ import { getBlogId } from "@/services/blog";
 import { FormatDate } from "@/utils/Format";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 export default async function BlogId({
   params,
 }: {
@@ -9,12 +10,17 @@ export default async function BlogId({
 }) {
   const { blogId } = await params;
   const blog = await getBlogId(blogId);
-
+  if (!blog) {
+    notFound();
+  }
   return (
     <article className="mx-auto grid grid-cols-14 ">
       <div className="col-span-full mt-8 lg:col-span-9 lg:pr-4">
         <div className=" font-semibold mb-6">
-          <h1 className="text-2xl text-black first-letter:uppercase dark:text-white md:text-[28px]">
+          <h1
+            className="text-2xl text-black first-letter:uppercase
+           dark:text-white md:text-[28px]"
+          >
             {blog.title}
           </h1>
           <p className="mt-2 text-sm text-[#707A8A]">

@@ -13,13 +13,12 @@ export default async function CategoryBlog({
 
   return (
     <div className="mt-5">
-
       <div className="mx-auto sm:mt-12">
         <section className="grid lg:grid-cols-3 md:grid-cols-2 gap-4">
           {category?.data.map((item) => (
             <article className="mb-2 sm:mb-8 cursor-pointer" key={item.id}>
               <div className="rounded-lg transition-all dark:hover:bg-[#1B1F24] ">
-                <Link href={`blog/${item.id}`}>
+                <Link href={`/blog/${item.slug}`}>
                   <div className="p-4">
                     <Image
                       src={item.image}

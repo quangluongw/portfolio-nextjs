@@ -74,7 +74,7 @@ export default function Header() {
             Blog <FontAwesomeIcon icon={faArrowDown} />
           </li>
           <li className="cursor-pointer hover:text-[#EBB12D]">
-            <Link href="resume">Resume</Link>
+            <Link href="/resume">Resume</Link>
           </li>
           {user && (
             <div className="flex flex-row gap-3">
